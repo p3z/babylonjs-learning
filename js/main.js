@@ -33,24 +33,71 @@ var createScene = function () {
        var scene = new BABYLON.Scene(engine);
    
        //Adding a light
-       var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 20, 100), scene);
+       const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
    
        //Adding an Arc Rotate Camera
        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
        camera.attachControl(canvas, false);
    
-           // Append glTF model to scene.
-    BABYLON.SceneLoader.Append("../", "bitter_brook_2022-05-22_22.13.39.gltf", scene, function (scene) {
-       // Create a default arc rotate camera and light.
-       scene.createDefaultCameraOrLight(true, true, true);
+   
+       create_tower_cylinder(7, 7);
+       let top_cone = create_cone();
+       create_lower_cone();
+       let lower_cylinder = create_tower_cylinder(12,12);
+       lower_cylinder.position.y = -11;
 
-       // The default camera looks at the back of the asset.
-       // Rotate the camera by 180 degrees to the front of the asset.
-       scene.activeCamera.alpha += Math.PI;
-   });
+       let main_roof = create_main_roof_block();
+       main_roof.position.y = -20;
+
+   
    
        return scene;
    }
+
+function create_tower_cylinder(h, w){
+       var disc = BABYLON.MeshBuilder.CreateCylinder("cylinder",  {diameter: w, height: h, tessellation: 8});
+       let material = new BABYLON.StandardMaterial("castle_stone", scene);
+       material.diffuseTexture = new BABYLON.Texture("castle_stone.png", scene);
+
+       disc.material = material;
+       return disc;
+}
+
+function create_cone(){
+       var cone = BABYLON.MeshBuilder.CreateCylinder("cone", {height: 8,diameterTop: 0, diameterBottom: 7, tessellation: 8}, scene);
+
+       let material = new BABYLON.StandardMaterial("roof_tiles", scene);
+       material.diffuseTexture = new BABYLON.Texture("roof_tiles.png", scene);
+
+       cone.material = material;
+       cone.position.y = 7.5;
+
+       return cone;
+}
+
+function create_lower_cone(){
+       var cone = BABYLON.MeshBuilder.CreateCylinder("cone", {height: 2.5,diameterTop: 7, diameterBottom: 12.5, tessellation: 8}, scene);
+
+       let material = new BABYLON.StandardMaterial("roof_tiles", scene);
+       material.diffuseTexture = new BABYLON.Texture("roof_tiles.png", scene);
+
+       cone.material = material;
+       cone.position.y = -4;
+
+       return cone;
+}
+
+function create_main_roof_block(){
+       var roof = BABYLON.MeshBuilder.CreateCylinder("cone", {height: 6,diameterTop: 70, diameterBottom: 100, tessellation: 4}, scene);
+
+       let material = new BABYLON.StandardMaterial("roof_tiles", scene);
+       material.diffuseTexture = new BABYLON.Texture("roof_tiles.png", scene);
+       roof.material = material;
+
+       return roof;
+       
+}
+
 
 
 window.onresize = () => {
